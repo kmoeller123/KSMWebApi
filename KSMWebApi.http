@@ -1,0 +1,6 @@
+@KSMWebApi_HostAddress = http://localhost:5188
+
+GET {{KSMWebApi_HostAddress}}/GetArtObjects/
+Accept: application/json
+
+###

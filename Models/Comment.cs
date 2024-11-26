@@ -14,4 +14,6 @@ public partial class Comment
     public string? FileType { get; set; }
 
     public string? FileName { get; set; }
+
+    public string? content { get; set; }
 }

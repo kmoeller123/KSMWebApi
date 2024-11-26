@@ -52,7 +52,7 @@ namespace KSMWebApi.Controllers
          }
 
         // POST: ArtObjects/Create
-               [HttpPost("Create")]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] ArtObject artObject)
         {
             if (ModelState.IsValid)

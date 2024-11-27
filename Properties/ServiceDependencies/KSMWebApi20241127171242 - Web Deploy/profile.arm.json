@@ -21,7 +21,7 @@
     },
     "resourceName": {
       "type": "string",
-      "defaultValue": "KSMWebApi20241127141036",
+      "defaultValue": "KSMWebApi20241127171242",
       "metadata": {
         "description": "Name of the main resource to be created by this template."
       }

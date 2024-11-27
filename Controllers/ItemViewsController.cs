@@ -6,30 +6,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KSMWebApi.Models;
-using System.Net;
+using Microsoft.VisualBasic;
 
 namespace KSMWebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ArtObjectsController : Controller
+    public class ItemViewsController : Controller
     {
         private readonly KsmartContext _context = new KsmartContext();
         private readonly ILogger<ArtObjectsController> _logger;
 
-        public ArtObjectsController(ILogger<ArtObjectsController> logger)
+        public ItemViewsController(ILogger<ArtObjectsController> logger)
         {
             _logger = logger;
         }
 
-        //GET: ArtObjects
+        // GET: ItemViews
         [HttpGet("All")]
         public async Task<IActionResult> Index()
         {
-            return Ok(await _context.ArtObjects.ToListAsync());
+            return Ok(await _context.ItemViews.ToListAsync());
         }
 
-        // GET: ArtObjects/Details/5
+        // GET: ItemViews/Details/5
         [HttpGet("Details/{id:int}")]
         public async Task<IActionResult> Details(int? id)
         {
@@ -38,53 +38,48 @@ namespace KSMWebApi.Controllers
                 return StatusCode(StatusCodes.Status206PartialContent);
             }
 
-            var result = await _context.ArtObjects.Where(m => m.Id == id).FirstOrDefaultAsync();
-
-
-            if (result == null)
+            var itemViews = await _context.ItemViews
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (itemViews == null)
             {
                 return StatusCode(StatusCodes.Status404NotFound);
             }
-            else
-            {
-                return Ok(result);
-            }
-         }
 
-        // POST: ArtObjects/Create
+            return Ok(itemViews);
+        }
+
+        // POST: ItemViews/Create
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] ArtObject artObject)
+        public async Task<IActionResult> Create([FromBody] ItemViews itemViews)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(artObject);
+                _context.Add(itemViews);
                 await _context.SaveChangesAsync();
-                return Ok(artObject);
+                return Ok(itemViews);
             }
-
-            return StatusCode(StatusCodes.Status404NotFound);
-
+            return StatusCode(StatusCodes.Status206PartialContent);
         }
 
-        // PUT: ArtObjects/Update/5        
+        // GET: ItemViews/Edit/5
         [HttpPut("Update/{id:int}")]
-        public async Task<IActionResult> Update(int id,[FromBody] ArtObject artObject)
+        public async Task<IActionResult> Update(int? id, [FromBody] ItemViews itemViews)
         {
-            if (id != artObject.Id)              
-             {
-                return StatusCode(StatusCodes.Status404NotFound);
+            if (id != itemViews.Id)
+            {
+                return StatusCode(StatusCodes.Status206PartialContent);
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(artObject);
+                    _context.Update(itemViews);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ArtObjectExists(artObject.Id))
+                    if (!ItemViewsExists(itemViews.Id))
                     {
                         return StatusCode(StatusCodes.Status404NotFound);
                     }
@@ -93,20 +88,19 @@ namespace KSMWebApi.Controllers
                         throw;
                     }
                 }
-                return Ok(artObject);
+                return Ok(itemViews);
             }
             return StatusCode(StatusCodes.Status206PartialContent);
         }
 
-
         // POST: ArtObjects/Delete/5
-        [HttpPost("Delete/{id:int}")]        
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost("Delete/{id:int}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var artObject = await _context.ArtObjects.FindAsync(id);
-            if (artObject != null)
+            var itemViews = await _context.ItemViews.FindAsync(id);
+            if (itemViews != null)
             {
-                _context.ArtObjects.Remove(artObject);
+                _context.ItemViews.Remove(itemViews);
             }
             else return StatusCode(StatusCodes.Status404NotFound);
 
@@ -114,9 +108,9 @@ namespace KSMWebApi.Controllers
             return StatusCode(StatusCodes.Status200OK);
         }
 
-        private bool ArtObjectExists(int id)
+        private bool ItemViewsExists(int id)
         {
-            return _context.ArtObjects.Any(e => e.Id == id);
+            return _context.ItemViews.Any(e => e.Id == id);
         }
     }
 }

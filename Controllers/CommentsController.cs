@@ -23,9 +23,9 @@ namespace KSMWebApi.Controllers
 
         // GET: Comments
         [HttpGet("All")]
-        public async Task<IList<Comment>> Index()
+        public async Task<IActionResult> Index()
         {
-            return await _context.Comments.ToListAsync();
+            return Ok(await _context.Comments.ToListAsync());
         }
 
         // GET: Comments/Details/5
@@ -34,7 +34,7 @@ namespace KSMWebApi.Controllers
         {
             if (id == null)
             {
-                return StatusCode(StatusCodes.Status404NotFound);
+                return StatusCode(StatusCodes.Status204NoContent);
             }
 
             var comment = await _context.Comments
@@ -61,8 +61,57 @@ namespace KSMWebApi.Controllers
                 return Ok(comment);
             }
             else return StatusCode(StatusCodes.Status206PartialContent);   
-        }        
-       
+        }
+
+        // PUT: Comments/Update/5        
+        [HttpPut("Update/{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] Comment comment)
+        {
+            if (id != comment.Id)
+            {
+                return StatusCode(StatusCodes.Status206PartialContent);
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(comment);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CommentExists(comment.Id))
+                    {
+                        return StatusCode(StatusCodes.Status404NotFound);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return Ok(comment);
+            }
+            return StatusCode(StatusCodes.Status206PartialContent);
+        }
+
+        // POST: Comments/Delete/5
+        [HttpPost("Delete/{id:int}")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var comment = await _context.Comments.FindAsync(id);
+
+            if (comment != null)
+            {
+                _context.Comments.Remove(comment);
+            }
+            else return StatusCode(StatusCodes.Status404NotFound);
+
+
+            await _context.SaveChangesAsync();
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
         private bool CommentExists(int id)
         {
             return _context.Comments.Any(e => e.Id == id);
